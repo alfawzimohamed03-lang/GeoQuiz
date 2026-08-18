@@ -78,6 +78,30 @@ final List<Question> questionsBank = [
     correctIndex: 1,
     category: QuizCategory.geographie,
   ),
+  const Question(
+    text: 'Quel est le pays le plus peuplé du monde en 2024 ?',
+    options: ['Chine', 'Inde', 'États-Unis', 'Indonésie'],
+    correctIndex: 1,
+    category: QuizCategory.geographie,
+  ),
+  const Question(
+    text: 'Quelle chaîne de montagnes abrite le mont Everest ?',
+    options: ['Les Andes', 'Les Alpes', 'L\'Himalaya', 'Les Rocheuses'],
+    correctIndex: 2,
+    category: QuizCategory.geographie,
+  ),
+  const Question(
+    text: 'Quel pays possède le plus grand nombre d\'îles au monde ?',
+    options: ['Indonésie', 'Philippines', 'Suède', 'Norvège'],
+    correctIndex: 2,
+    category: QuizCategory.geographie,
+  ),
+  const Question(
+    text: 'Quelle capitale européenne est traversée par le Danube ?',
+    options: ['Madrid', 'Vienne', 'Lisbonne', 'Berlin'],
+    correctIndex: 1,
+    category: QuizCategory.geographie,
+  ),
 
   // ---------------------------------------------------------------------
   // Histoire
@@ -163,6 +187,52 @@ final List<Question> questionsBank = [
     correctIndex: 1,
     category: QuizCategory.histoire,
   ),
+  const Question(
+    text: 'Quel événement a déclenché la Première Guerre mondiale ?',
+    options: [
+      'L\'assassinat de l\'archiduc François-Ferdinand',
+      'L\'invasion de la Pologne',
+      'Le krach boursier de 1929',
+      'La révolution russe',
+    ],
+    correctIndex: 0,
+    category: QuizCategory.histoire,
+  ),
+  const Question(
+    text: 'Quelle dynastie a régné sur la Chine impériale jusqu\'en 1912 ?',
+    options: ['Ming', 'Tang', 'Qing', 'Song'],
+    correctIndex: 2,
+    category: QuizCategory.histoire,
+  ),
+  const Question(
+    text: 'Qui a été le premier homme à marcher sur la Lune ?',
+    options: ['Buzz Aldrin', 'Youri Gagarine', 'Neil Armstrong', 'John Glenn'],
+    correctIndex: 2,
+    category: QuizCategory.histoire,
+  ),
+  const Question(
+    text: 'En quelle année la Révolution française a-t-elle vu la fin de la monarchie avec l\'exécution de Louis XVI ?',
+    options: ['1789', '1791', '1793', '1795'],
+    correctIndex: 2,
+    category: QuizCategory.histoire,
+  ),
+  const Question(
+    text: 'Quel roi est associé à la construction du château de Versailles ?',
+    options: ['Louis XIII', 'Louis XIV', 'Louis XV', 'Henri IV'],
+    correctIndex: 1,
+    category: QuizCategory.histoire,
+  ),
+  const Question(
+    text: 'Quel mur symbolisait la division de l\'Allemagne pendant la Guerre froide ?',
+    options: [
+      'Le mur d\'Hadrien',
+      'Le mur de Berlin',
+      'La ligne Maginot',
+      'Le rideau de fer',
+    ],
+    correctIndex: 1,
+    category: QuizCategory.histoire,
+  ),
 
   // ---------------------------------------------------------------------
   // Sciences
@@ -232,6 +302,52 @@ final List<Question> questionsBank = [
     correctIndex: 2,
     category: QuizCategory.sciences,
   ),
+  const Question(
+    text: 'Quel est le métal le plus abondant dans la croûte terrestre ?',
+    options: ['Fer', 'Aluminium', 'Cuivre', 'Zinc'],
+    correctIndex: 1,
+    category: QuizCategory.sciences,
+  ),
+  const Question(
+    text: 'Quelle est la formule chimique de l\'eau ?',
+    options: ['CO2', 'H2O', 'O2', 'NaCl'],
+    correctIndex: 1,
+    category: QuizCategory.sciences,
+  ),
+  const Question(
+    text: 'Quel savant a découvert la pénicilline ?',
+    options: [
+      'Louis Pasteur',
+      'Alexander Fleming',
+      'Marie Curie',
+      'Robert Koch',
+    ],
+    correctIndex: 1,
+    category: QuizCategory.sciences,
+  ),
+  const Question(
+    text: 'Combien de temps la Terre met-elle à faire le tour du Soleil ?',
+    options: [
+      '24 heures',
+      'environ 30 jours',
+      'environ 365 jours',
+      'environ 12 ans',
+    ],
+    correctIndex: 2,
+    category: QuizCategory.sciences,
+  ),
+  const Question(
+    text: 'Quelle particule porte une charge électrique négative ?',
+    options: ['Proton', 'Neutron', 'Électron', 'Photon'],
+    correctIndex: 2,
+    category: QuizCategory.sciences,
+  ),
+  const Question(
+    text: 'Quel est l\'animal terrestre le plus rapide sur de courtes distances ?',
+    options: ['Lion', 'Guépard', 'Antilope', 'Cheval'],
+    correctIndex: 1,
+    category: QuizCategory.sciences,
+  ),
 
   // ---------------------------------------------------------------------
   // Sport
@@ -283,6 +399,59 @@ final List<Question> questionsBank = [
     text: 'Quel athlète est surnommé « Eclair » ou « Lightning Bolt » pour ses records du 100m ?',
     options: ['Justin Gatlin', 'Usain Bolt', 'Tyson Gay', 'Yohan Blake'],
     correctIndex: 1,
+    category: QuizCategory.sport,
+  ),
+  const Question(
+    text: 'Combien de temps dure un match de football, hors prolongations ?',
+    options: ['80 minutes', '90 minutes', '100 minutes', '120 minutes'],
+    correctIndex: 1,
+    category: QuizCategory.sport,
+  ),
+  const Question(
+    text: 'Quel pays a organisé les Jeux Olympiques d\'été de 2024 ?',
+    options: ['Japon', 'Brésil', 'France', 'Royaume-Uni'],
+    correctIndex: 2,
+    category: QuizCategory.sport,
+  ),
+  const Question(
+    text: 'Dans quel sport utilise-t-on un « birdie » ou « volant » ?',
+    options: ['Tennis de table', 'Badminton', 'Squash', 'Tennis'],
+    correctIndex: 1,
+    category: QuizCategory.sport,
+  ),
+  const Question(
+    text: 'Combien de joueurs compte une équipe de volleyball sur le terrain ?',
+    options: ['5', '6', '7', '8'],
+    correctIndex: 1,
+    category: QuizCategory.sport,
+  ),
+  const Question(
+    text: 'Quel pays a remporté le plus de Coupes du Monde de football ?',
+    options: ['Allemagne', 'Argentine', 'Brésil', 'Italie'],
+    correctIndex: 2,
+    category: QuizCategory.sport,
+  ),
+  const Question(
+    text: 'Quelle discipline olympique se pratique dans une piscine avec une planche et un tuba ?',
+    options: ['Water-polo', 'Natation synchronisée', 'Plongeon', 'Triathlon'],
+    correctIndex: 1,
+    category: QuizCategory.sport,
+  ),
+  const Question(
+    text: 'Combien de trous compte un parcours de golf standard ?',
+    options: ['9', '12', '18', '24'],
+    correctIndex: 2,
+    category: QuizCategory.sport,
+  ),
+  const Question(
+    text: 'Quel est le tournoi de tennis disputé sur gazon à Londres ?',
+    options: [
+      'Roland-Garros',
+      'L\'US Open',
+      'L\'Open d\'Australie',
+      'Wimbledon',
+    ],
+    correctIndex: 3,
     category: QuizCategory.sport,
   ),
 
@@ -345,6 +514,61 @@ final List<Question> questionsBank = [
     text: 'Combien de couleurs compte un arc-en-ciel traditionnel ?',
     options: ['5', '6', '7', '8'],
     correctIndex: 2,
+    category: QuizCategory.divers,
+  ),
+  const Question(
+    text: 'Quel plat est composé de riz vinaigré et de poisson cru, originaire du Japon ?',
+    options: ['Le ramen', 'Les sushis', 'Le tempura', 'Le sashimi'],
+    correctIndex: 1,
+    category: QuizCategory.divers,
+  ),
+  const Question(
+    text:
+        'Quel compositeur autrichien est célèbre pour « La Flûte enchantée » ?',
+    options: ['Beethoven', 'Mozart', 'Bach', 'Chopin'],
+    correctIndex: 1,
+    category: QuizCategory.divers,
+  ),
+  const Question(
+    text: 'Quelle entreprise a créé le jeu vidéo Minecraft ?',
+    options: ['Epic Games', 'Mojang', 'Valve', 'Ubisoft'],
+    correctIndex: 1,
+    category: QuizCategory.divers,
+  ),
+  const Question(
+    text: 'Dans quel pays le café a-t-il été découvert selon la légende ?',
+    options: ['Brésil', 'Colombie', 'Éthiopie', 'Vietnam'],
+    correctIndex: 2,
+    category: QuizCategory.divers,
+  ),
+  const Question(
+    text: 'Quel super-héros est aussi connu sous le nom de Bruce Wayne ?',
+    options: ['Superman', 'Batman', 'Iron Man', 'Flash'],
+    correctIndex: 1,
+    category: QuizCategory.divers,
+  ),
+  const Question(
+    text:
+        'Combien de temps faut-il en moyenne pour faire bouillir un œuf dur ?',
+    options: ['1 minute', '3 minutes', '9 minutes', '20 minutes'],
+    correctIndex: 2,
+    category: QuizCategory.divers,
+  ),
+  const Question(
+    text: 'Quelle est la langue la plus parlée au monde en nombre de locuteurs natifs ?',
+    options: ['Anglais', 'Espagnol', 'Mandarin', 'Hindi'],
+    correctIndex: 2,
+    category: QuizCategory.divers,
+  ),
+  const Question(
+    text: 'Quel artiste a peint « La Nuit étoilée » ?',
+    options: [
+      'Claude Monet',
+      'Vincent van Gogh',
+      'Pablo Picasso',
+      'Paul Cézanne',
+    ],
+    correctIndex: 1,
     category: QuizCategory.divers,
   ),
 ];

@@ -22,13 +22,20 @@ class AnswerOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     final (
       Color background,
       Color border,
       Color foreground,
       IconData? icon,
     ) = switch (status) {
-      AnswerStatus.idle => (Colors.white, Colors.black12, Colors.black87, null),
+      AnswerStatus.idle => (
+        colorScheme.surface,
+        colorScheme.outlineVariant,
+        colorScheme.onSurface,
+        null,
+      ),
       AnswerStatus.selectedCorrect => (
         AppTheme.correct.withValues(alpha: 0.15),
         AppTheme.correct,

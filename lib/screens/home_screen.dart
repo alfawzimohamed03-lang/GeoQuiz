@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/category.dart';
 import '../theme/app_theme.dart';
+import 'history_screen.dart';
 import 'quiz_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -33,9 +34,24 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _openHistory() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const HistoryScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'Historique',
+            onPressed: _openHistory,
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -58,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 'Teste ta culture générale !',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge
-                    ?.copyWith(color: Colors.black54),
+                    ?.copyWith(color: colorScheme.onSurfaceVariant),
               ),
               const Spacer(flex: 2),
               Text(
@@ -79,13 +95,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     selectedColor: AppTheme.primary.withValues(alpha: 0.18),
                     checkmarkColor: AppTheme.primary,
                     labelStyle: TextStyle(
-                      color: selected ? AppTheme.primary : Colors.black87,
+                      color: selected
+                          ? AppTheme.primary
+                          : colorScheme.onSurface,
                       fontWeight: selected
                           ? FontWeight.w600
                           : FontWeight.normal,
                     ),
                     side: BorderSide(
-                      color: selected ? AppTheme.primary : Colors.black26,
+                      color: selected
+                          ? AppTheme.primary
+                          : colorScheme.outlineVariant,
                     ),
                   );
                 }).toList(),
