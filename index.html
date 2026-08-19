@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+    <title>Dr Driving Africa</title>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="game-canvas"></canvas>
+
+      <!-- HUD -->
+      <div id="hud" class="hidden">
+        <div class="hud-top">
+          <div class="hud-badge">
+            <span class="hud-label">Score</span>
+            <span id="hud-score">0</span>
+          </div>
+          <div class="hud-badge">
+            <span class="hud-label">Distance</span>
+            <span id="hud-distance">0 m</span>
+          </div>
+          <div id="hud-timer-badge" class="hud-badge hidden">
+            <span class="hud-label">Temps</span>
+            <span id="hud-timer">0s</span>
+          </div>
+          <div class="hud-badge">
+            <span class="hud-label">Vitesse</span>
+            <span id="hud-speed">0 km/h</span>
+          </div>
+        </div>
+        <div class="hud-bottom">
+          <div class="health-bar">
+            <div id="health-fill" class="health-fill"></div>
+          </div>
+          <div id="jam-warning" class="jam-warning hidden">⚠ Embouteillage</div>
+        </div>
+        <button id="btn-pause" class="icon-btn" aria-label="Pause">⏸</button>
+      </div>
+
+      <!-- Touch controls (mobile) -->
+      <div id="touch-controls" class="hidden">
+        <div class="touch-side">
+          <button id="btn-left" class="touch-btn" aria-label="Gauche">◀</button>
+          <button id="btn-right" class="touch-btn" aria-label="Droite">▶</button>
+        </div>
+        <div class="touch-side">
+          <button id="btn-brake" class="touch-btn" aria-label="Freiner">▼</button>
+          <button id="btn-gas" class="touch-btn touch-btn-accent" aria-label="Accélérer">▲</button>
+        </div>
+      </div>
+
+      <!-- Main menu -->
+      <div id="screen-menu" class="screen">
+        <div class="screen-panel menu-panel">
+          <h1 class="title">
+            <span class="title-line1">DR DRIVING</span>
+            <span class="title-line2">AFRICA</span>
+          </h1>
+          <p class="subtitle">Roule, esquive les embouteillages, relève le défi.</p>
+
+          <div class="section">
+            <h2 class="section-title">1. Choisis ta route</h2>
+            <div id="level-select" class="option-grid"></div>
+          </div>
+
+          <div class="section">
+            <h2 class="section-title">2. Choisis ton défi</h2>
+            <div id="challenge-select" class="option-grid"></div>
+          </div>
+
+          <p id="level-description" class="level-description"></p>
+
+          <button id="btn-start" class="btn btn-primary">▶ Démarrer</button>
+          <p class="hint">Flèches / ZQSD ou boutons tactiles pour conduire · Échap pour pause</p>
+        </div>
+      </div>
+
+      <!-- Pause menu -->
+      <div id="screen-pause" class="screen hidden">
+        <div class="screen-panel">
+          <h2 class="section-title-big">Pause</h2>
+          <button id="btn-resume" class="btn btn-primary">▶ Reprendre</button>
+          <button id="btn-quit" class="btn btn-secondary">⏹ Quitter au menu</button>
+        </div>
+      </div>
+
+      <!-- Game over -->
+      <div id="screen-gameover" class="screen hidden">
+        <div class="screen-panel">
+          <h2 id="gameover-title" class="section-title-big">Collision !</h2>
+          <p id="gameover-subtitle" class="subtitle"></p>
+          <div class="stat-grid">
+            <div class="stat-box">
+              <span class="hud-label">Score</span>
+              <span id="final-score">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="hud-label">Distance</span>
+              <span id="final-distance">0 m</span>
+            </div>
+            <div class="stat-box">
+              <span class="hud-label">Meilleur score</span>
+              <span id="final-best">0</span>
+            </div>
+          </div>
+          <button id="btn-retry" class="btn btn-primary">↻ Rejouer</button>
+          <button id="btn-menu" class="btn btn-secondary">☰ Menu</button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
