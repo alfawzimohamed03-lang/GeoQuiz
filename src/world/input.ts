@@ -1,11 +1,17 @@
-type DirectionField = 'left' | 'right' | 'gas' | 'brake';
+export interface InputState {
+  left: boolean;
+  right: boolean;
+  gas: boolean;
+  brake: boolean;
+}
 
-export class InputHandler {
+type DirectionField = keyof InputState;
+
+export class InputHandler implements InputState {
   left = false;
   right = false;
   gas = false;
   brake = false;
-  pauseRequested = false;
 
   private onPause: () => void;
 

@@ -8,7 +8,8 @@
   </head>
   <body>
     <div id="app">
-      <canvas id="game-canvas"></canvas>
+      <div id="three-root"></div>
+      <div id="floating-layer"></div>
 
       <!-- HUD -->
       <div id="hud" class="hidden">
@@ -58,21 +59,39 @@
             <span class="title-line1">DR DRIVING</span>
             <span class="title-line2">AFRICA</span>
           </h1>
-          <p class="subtitle">Roule, esquive les embouteillages, relève le défi.</p>
+          <p class="subtitle">Course de rue en 3D · trafic à double sens · tout le risque est permis.</p>
 
-          <div class="section">
-            <h2 class="section-title">1. Choisis ta route</h2>
+          <div class="menu-tabs">
+            <button class="menu-tab active" data-tab="pilot">1. Pilote</button>
+            <button class="menu-tab" data-tab="car">2. Véhicule</button>
+            <button class="menu-tab" data-tab="level">3. Route</button>
+            <button class="menu-tab" data-tab="challenge">4. Défi</button>
+          </div>
+
+          <div class="preview-box">
+            <canvas id="preview-canvas"></canvas>
+          </div>
+
+          <div id="tab-pilot" class="tab-panel">
+            <div id="pilot-select" class="option-grid"></div>
+          </div>
+
+          <div id="tab-car" class="tab-panel hidden">
+            <div id="car-select" class="option-grid"></div>
+            <p id="car-description" class="level-description"></p>
+          </div>
+
+          <div id="tab-level" class="tab-panel hidden">
             <div id="level-select" class="option-grid"></div>
+            <p id="level-description" class="level-description"></p>
           </div>
 
-          <div class="section">
-            <h2 class="section-title">2. Choisis ton défi</h2>
+          <div id="tab-challenge" class="tab-panel hidden">
             <div id="challenge-select" class="option-grid"></div>
+            <p id="challenge-description" class="level-description"></p>
           </div>
 
-          <p id="level-description" class="level-description"></p>
-
-          <button id="btn-start" class="btn btn-primary">▶ Démarrer</button>
+          <button id="btn-start" class="btn btn-primary">▶ Démarrer la course</button>
           <p class="hint">Flèches / ZQSD ou boutons tactiles pour conduire · Échap pour pause</p>
         </div>
       </div>
