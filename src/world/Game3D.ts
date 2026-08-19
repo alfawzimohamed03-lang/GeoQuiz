@@ -6,12 +6,19 @@ import {
   buildGround,
   buildRoadSurface,
   buildSkyDome,
-  createCityTiles,
-  updateCityTiles,
+  buildBackdrop,
+  buildSunDisc,
+  createTiles,
+  updateTiles,
+  disposeTiles,
   updateRoadScroll,
-} from './cityTrack';
+} from './track';
+import type { TrackTile, TilePopulateFn } from './track';
+import { getPopulateFn } from './biomes';
 import type { WorldEntity } from './traffic';
 import { spawnObstacle, spawnTraffic, updateEntity, disposeEntity } from './traffic';
+import type { ParticleSystem } from './particles';
+import { buildDustParticles, updateDustParticles, disposeDustParticles } from './particles';
 import type { CarClassConfig, ChallengeConfig, LevelConfig, PilotConfig } from './types';
 import { clamp, lerp, randomInt, randomRange } from './utils';
 import { getBestScore, setBestScore } from './storage';
@@ -34,12 +41,18 @@ export class Game3D {
   private challenge: ChallengeConfig | null = null;
   private player: PlayerController | null = null;
 
-  private cityTiles: ReturnType<typeof createCityTiles> = [];
+  private tiles: TrackTile[] = [];
+  private populateFn: TilePopulateFn = () => {};
   private roadMesh: THREE.Mesh | null = null;
   private groundMesh: THREE.Mesh | null = null;
   private skyMesh: THREE.Mesh | null = null;
+  private backdropGroup: THREE.Group | null = null;
+  private sunGroup: THREE.Group | null = null;
+  private dustSystem: ParticleSystem | null = null;
   private ambientLight: THREE.AmbientLight | null = null;
   private sunLight: THREE.DirectionalLight | null = null;
+  private pmremGenerator: THREE.PMREMGenerator;
+  private envRenderTarget: THREE.WebGLRenderTarget | null = null;
 
   private entities: WorldEntity[] = [];
   private floatingTexts: FloatingText[] = [];
@@ -100,6 +113,7 @@ export class Game3D {
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(62, 1, 0.1, 500);
+    this.pmremGenerator = new THREE.PMREMGenerator(this.renderer);
 
     this.floatingLayer = document.getElementById('floating-layer')!;
 
@@ -154,16 +168,28 @@ export class Game3D {
   }
 
   private clearScene() {
-    for (const tile of this.cityTiles) this.scene.remove(tile.group);
-    this.cityTiles = [];
+    disposeTiles(this.scene, this.tiles);
+    this.tiles = [];
     for (const e of this.entities) disposeEntity(this.scene, e);
     this.entities = [];
     if (this.roadMesh) this.scene.remove(this.roadMesh);
     if (this.groundMesh) this.scene.remove(this.groundMesh);
     if (this.skyMesh) this.scene.remove(this.skyMesh);
+    if (this.backdropGroup) this.scene.remove(this.backdropGroup);
+    if (this.sunGroup) this.scene.remove(this.sunGroup);
+    if (this.dustSystem) {
+      this.scene.remove(this.dustSystem.points);
+      disposeDustParticles(this.dustSystem);
+      this.dustSystem = null;
+    }
     if (this.ambientLight) this.scene.remove(this.ambientLight);
     if (this.sunLight) this.scene.remove(this.sunLight);
     if (this.player) this.scene.remove(this.player.mesh);
+    if (this.envRenderTarget) {
+      this.envRenderTarget.dispose();
+      this.envRenderTarget = null;
+      this.scene.environment = null;
+    }
     for (const ft of this.floatingTexts) ft.el.remove();
     this.floatingTexts = [];
   }
@@ -175,13 +201,35 @@ export class Game3D {
     this.skyMesh = buildSkyDome(level.skyTop, level.skyBottom);
     this.scene.add(this.skyMesh);
 
+    // Bake the sky into a lightweight environment map so car paint/glass pick up
+    // realistic ambient reflections instead of looking like flat, matte plastic.
+    const envScene = new THREE.Scene();
+    const envSky = buildSkyDome(level.skyTop, level.skyBottom);
+    envScene.add(envSky);
+    this.envRenderTarget = this.pmremGenerator.fromScene(envScene, 0.03);
+    this.scene.environment = this.envRenderTarget.texture;
+    envSky.geometry.dispose();
+    (envSky.material as THREE.Material).dispose();
+
+    this.backdropGroup = buildBackdrop(level);
+    if (this.backdropGroup) this.scene.add(this.backdropGroup);
+
+    this.sunGroup = buildSunDisc(level.sunColor, 60 + level.sunIntensity * 20);
+    this.scene.add(this.sunGroup);
+
     this.groundMesh = buildGround(level);
     this.scene.add(this.groundMesh);
 
     this.roadMesh = buildRoadSurface(level);
     this.scene.add(this.roadMesh);
 
-    this.cityTiles = createCityTiles(this.scene);
+    this.populateFn = getPopulateFn(level);
+    this.tiles = createTiles(this.scene, this.populateFn);
+
+    if (level.dustParticles) {
+      this.dustSystem = buildDustParticles(level.terrainStyle === 'dunes' ? '#e8c98a' : '#dce8a0');
+      this.scene.add(this.dustSystem.points);
+    }
 
     this.ambientLight = new THREE.AmbientLight(level.ambientColor, level.ambientIntensity);
     this.scene.add(this.ambientLight);
@@ -319,7 +367,8 @@ export class Game3D {
     this.elapsedTime += dt;
 
     updateRoadScroll(this.roadMesh!, this.distance);
-    updateCityTiles(this.cityTiles, player.speed, dt);
+    updateTiles(this.tiles, this.populateFn, player.speed, dt);
+    if (this.dustSystem) updateDustParticles(this.dustSystem, player.speed, dt);
 
     this.updateJamZone(level);
     this.updateSpawning(level, dt);
@@ -367,7 +416,7 @@ export class Game3D {
     const spawnZ = -200;
 
     if (Math.random() < level.obstacleChance) {
-      this.entities.push(spawnObstacle(this.scene, lane, spawnZ));
+      this.entities.push(spawnObstacle(this.scene, level, lane, spawnZ));
     } else {
       const trafficBase = lerp(level.baseTrafficSpeed, level.maxTrafficSpeed, difficulty);
       const jamSpeedMultiplier = this.jamActive ? randomRange(0.05, 0.25) : 1;

@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { buildCarMesh } from './carFactory';
 import { CAR_CLASSES } from './types';
-import { laneCenterX, isOncomingLane, ROAD_LEFT, ROAD_RIGHT } from './cityTrack';
+import type { LevelConfig, LevelId } from './types';
+import { laneCenterX, isOncomingLane, ROAD_LEFT, ROAD_RIGHT } from './track';
 import { randomRange, pick } from './utils';
 
 export type ObstacleSubtype = 'pothole' | 'speed_bump' | 'debris' | 'animal' | 'cone';
@@ -57,9 +58,66 @@ export function spawnTraffic(scene: THREE.Scene, lane: number, speed: number, sp
   };
 }
 
-const OBSTACLE_POOL: ObstacleSubtype[] = ['pothole', 'speed_bump', 'debris', 'cone', 'animal'];
+const OBSTACLE_POOL_BY_LEVEL: Record<LevelId, ObstacleSubtype[]> = {
+  street_city: ['pothole', 'speed_bump', 'cone', 'debris'],
+  desert_tenere: ['pothole', 'debris', 'animal', 'animal'],
+  forest_savanna: ['pothole', 'debris', 'animal', 'animal'],
+  village_road: ['pothole', 'speed_bump', 'animal', 'debris'],
+};
 
-function buildObstacleMesh(subtype: ObstacleSubtype): { mesh: THREE.Group; width: number; length: number } {
+interface AnimalSpec {
+  bodyColor: string;
+  legColor: string;
+  bodyRadius: number;
+  bodyLength: number;
+  bodyHeight: number;
+  hasHump: boolean;
+}
+
+const ANIMAL_BY_LEVEL: Record<LevelId, AnimalSpec> = {
+  street_city: { bodyColor: '#8a6b45', legColor: '#5c4632', bodyRadius: 0.22, bodyLength: 0.6, bodyHeight: 0.42, hasHump: false },
+  village_road: { bodyColor: '#d8d0c0', legColor: '#3a3a3a', bodyRadius: 0.2, bodyLength: 0.55, bodyHeight: 0.4, hasHump: false },
+  forest_savanna: { bodyColor: '#c9a06a', legColor: '#8a6b45', bodyRadius: 0.17, bodyLength: 0.6, bodyHeight: 0.55, hasHump: false },
+  desert_tenere: { bodyColor: '#c9a06a', legColor: '#9c7a4e', bodyRadius: 0.3, bodyLength: 1.0, bodyHeight: 0.95, hasHump: true },
+};
+
+function buildAnimalMesh(level: LevelId): { mesh: THREE.Group; width: number; length: number } {
+  const spec = ANIMAL_BY_LEVEL[level];
+  const group = new THREE.Group();
+  const bodyMat = new THREE.MeshStandardMaterial({ color: spec.bodyColor, roughness: 0.9 });
+
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(spec.bodyRadius, spec.bodyLength, 4, 8), bodyMat);
+  body.rotation.z = Math.PI / 2;
+  body.position.y = spec.bodyHeight;
+  body.castShadow = true;
+  group.add(body);
+
+  if (spec.hasHump) {
+    const hump = new THREE.Mesh(new THREE.SphereGeometry(spec.bodyRadius * 0.9, 8, 8), bodyMat);
+    hump.position.set(0, spec.bodyHeight + spec.bodyRadius * 0.7, 0);
+    group.add(hump);
+  }
+
+  const legMat = new THREE.MeshStandardMaterial({ color: spec.legColor });
+  const legLength = spec.bodyHeight * 0.75;
+  for (const dx of [-spec.bodyLength * 0.55, spec.bodyLength * 0.15]) {
+    for (const dz of [-spec.bodyRadius * 1.3, spec.bodyRadius * 1.3]) {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, legLength, 6), legMat);
+      leg.position.set(dz, legLength / 2, dx);
+      group.add(leg);
+    }
+  }
+
+  const head = new THREE.Mesh(new THREE.SphereGeometry(spec.bodyRadius * 0.7, 8, 8), bodyMat);
+  head.position.set(0, spec.bodyHeight + (spec.hasHump ? spec.bodyRadius * 0.3 : 0.1), -spec.bodyLength * 0.85);
+  group.add(head);
+
+  const width = spec.bodyRadius * 2.6;
+  const length = spec.bodyLength + spec.bodyRadius * 2;
+  return { mesh: group, width, length };
+}
+
+function buildObstacleMesh(subtype: ObstacleSubtype, levelId: LevelId): { mesh: THREE.Group; width: number; length: number } {
   const group = new THREE.Group();
   let width = 1;
   let length = 1;
@@ -111,26 +169,10 @@ function buildObstacleMesh(subtype: ObstacleSubtype): { mesh: THREE.Group; width
       break;
     }
     case 'animal': {
-      width = 0.6;
-      length = 1.1;
-      const bodyGeo = new THREE.CapsuleGeometry(0.22, 0.6, 4, 8);
-      const bodyMat = new THREE.MeshStandardMaterial({ color: '#8a6b45', roughness: 0.9 });
-      const body = new THREE.Mesh(bodyGeo, bodyMat);
-      body.rotation.z = Math.PI / 2;
-      body.position.y = 0.42;
-      body.castShadow = true;
-      group.add(body);
-      const legMat = new THREE.MeshStandardMaterial({ color: '#5c4632' });
-      for (const dx of [-0.35, 0.05]) {
-        for (const dz of [-0.15, 0.15]) {
-          const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.4, 6), legMat);
-          leg.position.set(dz, 0.2, dx);
-          group.add(leg);
-        }
-      }
-      const head = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), bodyMat);
-      head.position.set(0, 0.55, -0.55);
-      group.add(head);
+      const animal = buildAnimalMesh(levelId);
+      group.add(animal.mesh);
+      width = animal.width;
+      length = animal.length;
       break;
     }
   }
@@ -138,9 +180,10 @@ function buildObstacleMesh(subtype: ObstacleSubtype): { mesh: THREE.Group; width
   return { mesh: group, width, length };
 }
 
-export function spawnObstacle(scene: THREE.Scene, lane: number, spawnZ: number): WorldEntity {
-  const subtype = pick(OBSTACLE_POOL);
-  const { mesh, width, length } = buildObstacleMesh(subtype);
+export function spawnObstacle(scene: THREE.Scene, level: LevelConfig, lane: number, spawnZ: number): WorldEntity {
+  const pool = OBSTACLE_POOL_BY_LEVEL[level.id];
+  const subtype = pick(pool);
+  const { mesh, width, length } = buildObstacleMesh(subtype, level.id);
   const x = laneCenterX(lane);
   mesh.position.x = x;
   mesh.position.z = spawnZ;
@@ -151,7 +194,7 @@ export function spawnObstacle(scene: THREE.Scene, lane: number, spawnZ: number):
     speed_bump: 5,
     debris: 14,
     cone: 6,
-    animal: 20,
+    animal: level.id === 'desert_tenere' ? 26 : 18,
   };
   const speedPenaltyBySubtype: Record<ObstacleSubtype, number> = {
     pothole: 8,

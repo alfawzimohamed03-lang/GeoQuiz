@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { clamp } from './utils';
 import type { CarClassConfig } from './types';
 import type { InputState } from './input';
-import { ROAD_LEFT, ROAD_RIGHT } from './cityTrack';
+import { ROAD_LEFT, ROAD_RIGHT } from './track';
 
 export class PlayerController {
   mesh: THREE.Group;
